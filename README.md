@@ -38,8 +38,8 @@ Bu bölüm, projeyi bilgisayarınızda sıfırdan kurup çalıştırmanız için
 ### 1. Projeyi Bilgisayarınıza İndirin (Git Clone)
 Bilgisayarınızda PowerShell (Windows) veya Terminal (Mac/Linux) uygulamasını açın ve projeyi GitHub'dan klonlayarak klasörün içine girin:
 ```bash
-git clone https://github.com/balciemirhan/istanbul-economy-sentiment.git
-cd istanbul-economy-sentiment
+git clone https://github.com/balciemirhan/istanbul-economy-sentiment-v2.git
+cd istanbul-economy-sentiment-v2
 ```
 
 ### 2. Sanal Ortam (Virtual Environment) Oluşturun ve Aktifleştirin
@@ -132,7 +132,7 @@ python -c "from database.db_manager import init_db; init_db()"
 
 *(Eğer sıfırdan boş bir veritabanı kurmak isterseniz, `istanbul_ekonomi_demo.db` dosyasını silmeniz veya adını değiştirmeniz yeterlidir. Ardından yukarıdaki komut boş veritabanını oluşturacak ve `python scripts/process_excel_tweets.py` komutuyla kendi Excel verilerinizi aktarabileceksiniz.)*
 
-### 4. Web Arayüzünü (Dashboard) ve Sunucuyu Başlatın
+### 3. Web Arayüzünü (Dashboard) ve Sunucuyu Başlatın
 Tüm hazırlıklar tamamlandıktan sonra Flask web sunucusunu ayağa kaldırmak için şu komutu yazın:
 ```bash
 python dashboard/api/app.py
@@ -145,7 +145,7 @@ Sunucu başarıyla başladığında terminalde şu şekilde bir çıktı görece
 * Duygu analizi modeli başarıyla yüklendi.
 ```
 
-### 5. Tarayıcınızda Arayüzü Açın
+### 4. Tarayıcınızda Arayüzü Açın
 Tarayıcınızı (Chrome, Edge, Safari vb.) açın ve aşağıdaki adrese gidin:
 👉 **[http://127.0.0.1:5000](http://127.0.0.1:5000)**
 
