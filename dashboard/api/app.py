@@ -1,9 +1,13 @@
 from flask import Flask, jsonify, render_template, request, send_file
 from flask_cors import CORS
 import os
+import sys
 import threading
 import pandas as pd
 import io
+
+# Proje kök dizinini Python yoluna ekle (böylece doğrudan da çalıştırılabilir)
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from database.db_manager import (
     SessionLocal, Tweet, Keyword,
