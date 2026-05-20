@@ -1,0 +1,39 @@
+# Güvenlik ve Gizli Dosyalar
+.env
+
+# Veritabanı ve Veri Dosyaları
+*.db
+!istanbul_ekonomi_demo.db
+*.sqlite3
+data/*.json
+
+# Raporlar ve Çıktılar
+reports/
+*.xlsx
+*.csv
+
+# Model Klasörleri (Büyük Safetensors Modelleri)
+fine_tuned_bert/
+bert-128k-istanbul-sentiment/
+
+# Geçici Teşhis ve İzleyici Scriptleri
+scratch/
+watch.py
+project_state.md
+project_status.md
+
+# Veri Setleri
+text,label,reason.txt
+text,label,reason_5k.txt
+
+# Python Ortam ve Derleme Dosyaları
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.venv/
+
+# Sistem Dosyaları
+.DS_Store
+Thumbs.db

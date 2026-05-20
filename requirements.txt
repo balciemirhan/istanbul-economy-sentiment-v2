@@ -1,0 +1,23 @@
+# X API
+requests
+
+# NLP
+transformers
+torch
+sentencepiece
+tiktoken
+
+# Database
+sqlalchemy
+
+# Dashboard API
+flask
+flask-cors
+
+# Utils
+python-dotenv
+python-dateutil
+pandas
+openpyxl
+thefuzz
+python-Levenshtein

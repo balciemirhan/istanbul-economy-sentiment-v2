@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>İstanbul Ekonomi - Duygu Analizi Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header" style="position: relative;">
+    <div style="position: absolute; right: 0; top: 0; display: flex; gap: 12px;">
+      <a href="/api/export" style="padding: 8px 16px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; color: var(--text); text-decoration: none; font-size: 14px; font-weight: 500; transition: 0.2s;" onmouseover="this.style.borderColor='var(--positive)'" onmouseout="this.style.borderColor='rgba(16, 185, 129, 0.3)'">📥 Excel İndir</a>
+      <a href="/admin" style="padding: 8px 16px; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 8px; color: var(--text); text-decoration: none; font-size: 14px; font-weight: 500; transition: 0.2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='rgba(99, 102, 241, 0.3)'">⚙️ Yönetim Paneli</a>
+    </div>
+    
+    <div class="header-badge">🤖 Makine Öğrenmesi · NLP · BERT</div>
+    <h1>İstanbul Ekonomi<br>Duygu Analizi</h1>
+    <p>Twitter'da "istanbul" ve "ekonomi" içeren tweetlerin sentiment analizi</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card total">
+      <div class="label">Toplam Tweet</div>
+      <div class="value" id="stat-total">-</div>
+      <div class="sub">Tüm zamanlar</div>
+    </div>
+    <div class="stat-card positive">
+      <div class="label">Pozitif</div>
+      <div class="value" id="stat-positive">-</div>
+      <div class="sub" id="sub-positive">-% oran</div>
+    </div>
+    <div class="stat-card negative">
+      <div class="label">Negatif</div>
+      <div class="value" id="stat-negative">-</div>
+      <div class="sub" id="sub-negative">-% oran</div>
+    </div>
+    <div class="stat-card neutral">
+      <div class="label">Nötr</div>
+      <div class="value" id="stat-neutral">-</div>
+      <div class="sub" id="sub-neutral">-% oran</div>
+    </div>
+  </div>
+
+  <!-- Charts Grid (Pie + AI Insights + Line) -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3><span class="icon" style="background:var(--accent-glow);">📊</span> Duygu Dağılımı</h3>
+      <canvas id="pieChart"></canvas>
+    </div>
+    
+    <div class="ai-insights-container" id="aiInsightsContainer">
+      <div class="ai-insights-header">
+        <span class="ai-icon">💡</span> NLP & Sistem İçgörüleri
+      </div>
+      <div id="aiInsightsList" style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font-size: 12px; color: var(--text-dim); text-align: center; padding-top: 30px;">İçgörüler hesaplanıyor...</div>
+      </div>
+    </div>
+    
+    <div class="chart-card trend-chart-card" id="trendChartCard">
+      <div class="trend-chart-header">
+        <div class="title-block">
+          <h3><span class="icon" style="background:var(--accent-glow);">📈</span> Haftalık Trend</h3>
+          <p class="trend-chart-subtitle">Son 28 gün · Tweet yayın tarihine göre (X)</p>
+        </div>
+        <div class="trend-view-toggle" role="tablist" aria-label="Grafik görünümü">
+          <button type="button" class="trend-view-btn active" data-view="line" onclick="setTrendView('line')">Çizgi</button>
+          <button type="button" class="trend-view-btn" data-view="stacked" onclick="setTrendView('stacked')">Yığın</button>
+        </div>
+      </div>
+      <div class="trend-week-pills" id="trendWeekPills"></div>
+      <div class="trend-chart-wrap">
+        <canvas id="lineChart" aria-label="Haftalık duygu trend grafiği"></canvas>
+        <div class="trend-loading" id="trendLoading">
+          <div style="width:32px;height:32px;border:3px solid var(--card-border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+        </div>
+        <div class="trend-empty" id="trendEmpty">
+          <div class="trend-empty-icon">📭</div>
+          <p>Bu dönemde henüz tweet yok. Admin panelinden veri çektiğinizde haftalık dağılım burada görünür.</p>
+        </div>
+      </div>
+      <div class="trend-summary-bar" id="trendSummaryBar">
+        <span>28 günlük toplam: <strong id="trendPeriodTotal">0</strong> tweet</span>
+        <span id="trendMomentumText">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tweet Feed -->
+  <div class="feed-section">
+    <h3>💬 Örnek Tweetler</h3>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+      <div>
+        <div style="font-size: 11px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Duygu Durumu</div>
+        <div class="feed-tabs" id="sentimentTabs" style="margin-bottom: 0;">
+          <button class="feed-tab active" onclick="setSentimentFilter('hepsi')">Hepsi</button>
+          <button class="feed-tab" onclick="setSentimentFilter('pozitif')">🟢 Pozitif</button>
+          <button class="feed-tab" onclick="setSentimentFilter('negatif')">🔴 Negatif</button>
+          <button class="feed-tab" onclick="setSentimentFilter('notr')">🟡 Nötr</button>
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 11px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; text-align: right;">Kategori Filtresi</div>
+        <button class="topic-filter-btn" onclick="openTopicModal()" id="topicFilterBtn">
+          <span class="icon">🌍</span>
+          <span class="text">Tüm Konular</span>
+          <span class="chevron">▼</span>
+        </button>
+      </div>
+    </div>
+    <div class="tweet-list" id="tweetList"></div>
+  </div>
+
+  <!-- Methodology -->
+  <div class="method-bar">
+    <div class="method-item">Model: <span>BERT (Turkish fine-tuned)</span></div>
+    <div class="method-item">Kaynak: <span>Twitter/X API</span></div>
+    <div class="method-item">Dönem: <span>Son 4 hafta (28 gün)</span></div>
+    <div class="method-item">Güven: <span id="stat-confidence">Ort. -</span></div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+<!-- Premium Topic Filter Modal -->
+<div class="topic-modal-overlay" id="topicModal" onclick="closeTopicModal(event)">
+  <div class="topic-modal-content" onclick="event.stopPropagation()">
+    <div class="topic-modal-header">
+      <div class="topic-modal-title">İlgilendiğiniz Konuyu Seçin</div>
+      <button class="topic-modal-close" onclick="closeTopicModal()">×</button>
+    </div>
+    <div class="topic-grid" id="topicGrid">
+      <!-- JS ile dinamik doldurulacak -->
+    </div>
+  </div>
+</div>
+
+<!-- Yukarı Çık Butonu -->
+<div class="scroll-to-top" id="scrollToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 15l-6-6-6 6"/>
+  </svg>
+</div>
+
+</body>
+</html>
