@@ -85,63 +85,22 @@ Aşağıdaki paketler sistemin çalışması için arka planda kurulur:
 
 ---
 
-## 🧠 Model Kurulumu ve İnce-Aralı (Fine-Tuned) Model Kullanımı
+## 🤗 Akıllı ve Otomatik Model Kurulumu (Hugging Face)
 
-Projede kendi eğittiğimiz, yüksek doğruluklu ince-ayarlı (fine-tuned) bir **BERTurk-128k (Turkish BERT)** modeli kullanılmaktadır. Ancak bu model dosyaları büyük boyutlu (**~737 MB**) olduğu için GitHub'a yüklenmez (`.gitignore` ile korunur).
+Bu proje, İstanbul ekonomi ve ulaşım gündemine özel olarak eğitilmiş, **%99.60 doğrulama başarısı** ve **0.9960 Macro-F1 skoruna** sahip üstün yetenekli **128k BERTurk** yapay zeka modelini kullanır:
+👉 **[Emirhan41/bert-base-turkish-128k-istanbul-sentiment](https://huggingface.co/Emirhan41/bert-base-turkish-128k-istanbul-sentiment)**
 
-Yerel eğittiğiniz modelinizi projede aktif etmek için aşağıdaki yönergeleri takip edin:
+### ⚡ Sıfır Kurulum (Zero-Configuration) Kolaylığı
+Modeli kullanmak veya indirmek için hiçbir manuel işlem yapmanıza gerek yoktur! Projeyi çalıştırdığınızda akıllı model yönetim mekanizması devreye girer:
 
-### Seçenek A: Yerel (Fine-Tuned) Modeli Kullanmak (Önerilen)
-Eğer elinizdeki yerel eğitilmiş modeli projeye dahil etmek istiyorsanız, proje kök dizininde `fine_tuned_bert` adında bir klasör oluşturun ve eğitilen model çıktılarını doğrudan bu klasörün altına yerleştirin.
+1. **İlk Çalıştırmada Otomatik İndirme:** Sistem ilk kez başlatıldığında, Hugging Face Hub üzerinden **~737 MB** boyutundaki özel eğitilmiş modeli arka planda otomatik olarak indirmeye başlar. İnternet hızınıza bağlı olarak bu işlem **1-3 dakika** sürebilir.
+2. **Yerel Önbellek (Cache) Desteği:** İndirilen model dosyaları bilgisayarınızın standart kullanıcı dizininde güvenli bir şekilde saklanır:
+   * **Windows:** `C:\Users\<Kullanıcı_Adı>\.cache\huggingface\hub\`
+   * **macOS / Linux:** `~/.cache/huggingface/hub/`
+3. **Anında Başlatma:** Model bir kere indirildikten sonra sonraki çalıştırmaların tamamında doğrudan yerel diskten saniyeler içinde yüklenir ve internet bağlantısı gerektirmez.
 
-#### 📂 Doğru Klasör Hiyerarşisi:
-```text
-istanbulmetre_cardiffnlp/
-├── fine_tuned_bert/
-│   ├── config.json               # Model konfigürasyon dosyası
-│   ├── model.safetensors         # Model ağırlıkları (Veya pytorch_model.bin)
-│   ├── tokenizer.json            # Tokenizer yapılandırması
-│   ├── tokenizer_config.json
-│   ├── special_tokens_map.json
-│   └── vocab.txt                 # Kelime haznesi dosyası
-├── nlp/
-├── database/
-...
-```
-Sistem çalıştırıldığında `fine_tuned_bert` klasörünü otomatik olarak algılayacak ve doğrudan bu özel modeli yükleyecektir.
-
----
-
-### Seçenek B: Otomatik Fallback (Hugging Face) Modeli
-Eğer henüz yerel bir model klasörü eklemediyseniz, sistemin çökmesini engellemek için akıllı bir **otomatik geri çekilme (fallback)** mekanizması devreye girer:
-
-*   **Arka Planda İndirilecekler:** Sistem `fine_tuned_bert` yerel klasörünü bulamazsa (örneğin projeyi GitHub'dan yeni klonlayan başka biriyseniz), projenin sahibi tarafından bizzat eğitilip Hugging Face'e yüklenen özel `Emirhan41/bert-base-turkish-128k-istanbul-sentiment` modelini internetten otomatik olarak indirmeye başlar. **(Not: Siz modeli zaten eğittiğiniz ve bilgisayarınızda `fine_tuned_bert` klasörü olduğu için sizde HİÇBİR İNDİRME YAPILMAZ, model direkt saniyeler içinde lokalden çalışır.)**
-*   **Dosya Boyutu ve Süre:** Bu model yaklaşık **737 MB** boyutundadır. İnternet hızınıza bağlı olarak ilk çalıştırma **1-3 dakika** sürebilir.
-*   **Önbellek (Cache) Mekanizması:** İndirilen model dosyaları bilgisayarınızın standart kullanıcı dizinindeki Hugging Face önbelleğinde saklanır:
-    *   **Windows:** `C:\Users\<Kullanıcı_Adı>\.cache\huggingface\hub\`
-    *   **Mac/Linux:** `~/.cache/huggingface/hub/`
-    *   *Bu sayede model sadece 1 kere indirilir, sonraki çalıştırmalarda anında açılır.*
-
----
-
-### ☁️ Yerel Modelinizi Hugging Face Hub'a Yükleme (Kılavuz)
-Kendi eğittiğiniz `./fine_tuned_bert` modelinizi Hugging Face Hub'a yüklemek ve projeyi klonlayan herkesin **doğrudan sizin modelinizi internetten indirmesini** sağlamak için şu adımları takip edin:
-
-1.  **Hugging Face Access Token Alın:**
-    *   [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens) adresine gidin ve **Write** (Yazma) yetkili yeni bir Access Token oluşturup kopyalayın.
-2.  **Yükleme Yardımcı Scriptini Çalıştırın:**
-    *   Terminal veya PowerShell üzerinden şu komutu yazarak yükleme aracını başlatın:
-        ```bash
-        python scripts/push_model_to_hub.py
-        ```
-    *   Sırasıyla **Access Token**'ınızı, Hugging Face **Kullanıcı Adınızı** ve model için belirlemek istediğiniz **Depo Adını** girin.
-    *   Araç, yerel modelinizi otomatik olarak Hugging Face Hub'a yükleyecektir (Boyut nedeniyle birkaç dakika sürebilir).
-3.  **Proje Yapılandırmasını Güncelleyin:**
-    *   Yükleme bittikten sonra `config.py` dosyasını açın ve 15. satırı kendi model depo adınızla güncelleyin (Bu işlem proje sahibi tarafından zaten yapılmıştır):
-        ```python
-        SENTIMENT_MODEL = "./fine_tuned_bert" if os.path.exists("./fine_tuned_bert") else "Emirhan41/bert-base-turkish-128k-istanbul-sentiment"
-        ```
-    *   Böylece yerel klasör olmasa bile sistem doğrudan sizin eğittiğiniz özel modeli internetten çekip çalıştıracaktır!
+> [!NOTE]
+> Proje kodu içerisinde yerel geliştiriciler için opsiyonel `./fine_tuned_bert` klasör desteği de aktif tutulmuştur. Eğer model yerel klasörde bulunursa internete hiç çıkılmadan doğrudan oradan okunur.
 
 ---
 
