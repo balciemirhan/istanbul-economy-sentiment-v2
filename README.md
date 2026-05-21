@@ -21,6 +21,75 @@ Bu proje, daha önceki **[balciemirhan/istanbul-economy-sentiment](https://githu
 
 ---
 
+## 📊 Model Karşılaştırma ve Performans Analizi (Savaş BERT vs. Yeni Fine-Tuned BERTurk)
+
+Projenin v2 aşamasında yapılan en büyük iyileştirme, duygu analizi motorunun tamamen yenilenmesidir. Eski genel amaçlı **Savaş BERT** (`savasy/bert-base-turkish-sentiment-cased`) modeli ile yeni, 5.017 adet özel tweet ile ince ayar (fine-tuning) yapılmış yerel **128k BERTurk** (`Emirhan41/bert-base-turkish-128k-istanbul-sentiment`) modelinin karşılaştırmalı performans ve doğruluk analizi aşağıda detaylandırılmıştır.
+
+### 1. 📈 İnce Ayarlı (Fine-Tuned) Modelin Eğitim Performansı
+Modelimiz, yerel CPU/GPU kaynakları kullanılarak 3 epoch boyunca eğitilmiştir. Eğitim adımları ve doğrulama performansı metrikleri şu şekildedir:
+
+| Epoch | Toplam Adım (Step) | Doğrulama Kaybı (Val Loss) | Genel Doğruluk (Val Accuracy) | Genel Makro F1-Skor | 🔴 Sınıf 0 F1 | 🟡 Sınıf 1 F1 | 🟢 Sınıf 2 F1 | Durum |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
+| **Epoch 1** | 283 | 0.0207 | %99.20 | 0.9920 | 0.9881 | 1.0000 | 0.9880 | Kararlı Başlangıç |
+| **Epoch 2** | 566 | 0.0266 | %99.00 | 0.9900 | 0.9881 | 0.9970 | 0.9849 | Kararlı ve Dengeli |
+| **Epoch 3** | **849** | **0.0142** | **%99.60** | **0.9960** | **0.9941** | **1.0000** | **0.9939** | 🏆 **En Başarılı Model (Seçilen)** |
+
+> [!NOTE]
+> **Epoch 3 Tercihi:** En düşük doğrulama kaybı (Val Loss: `0.0142`) ile en yüksek Makro F1-Skorunun (`0.9960`) kesiştiği an olan 3. Epoch, ezberleme (overfitting) riski taşımadan modelin en yüksek genelleme yeteneğine ulaştığı noktadır.
+
+---
+
+### 2. 🎯 Test Seti (260 Tweet) Üzerinde 1-to-1 Dağılım Karşılaştırması
+Filtrelerden başarıyla geçmiş 260 adet gerçek/temiz tweetlik test seti üzerinde her iki modelin de tahmin dağılımları:
+
+| Model | Pozitif Sayısı | Negatif Sayısı | Nötr Sayısı | Toplam Tweet |
+| :--- | :---: | :---: | :---: | :---: |
+| **Eski Savaş BERT (v1)** | 41 (%15.8) | 155 (%59.6) | 64 (%24.6) | 260 |
+| **Yeni Fine-Tuned BERTurk (v2)** | **35 (%13.5)** | **141 (%54.2)** | **84 (%32.3)** | **260** |
+
+*   **Karar Farklılığı:** İki model arasında 260 tweetin **82 adedinde (~%31.5)** uyuşmazlık tespit edilmiştir. Yeni modelimiz, eski modelin sığ kelime eşleştirmelerinden kaynaklanan hatalı tahminlerini düzeltmiştir.
+
+#### 📊 Modeller Arası Performans ve Dağılım Grafikleri
+
+Aşağıdaki grafikler iki modelin tahmin dağılımlarını ve sınıflandırma kararlarının geçiş matrisini (hangi duygunun nereye kaydığını) görselleştirmektedir:
+
+<p align="center">
+  <img src="reports/savas_vs_berturk_distribution.png" width="48%" alt="Modeller Arası Duygu Dağılım Grafiği" />
+  <img src="reports/savas_vs_berturk_transitions.png" width="48%" alt="Sınıflandırma Karar Geçiş Matrisi (Heatmap)" />
+</p>
+
+---
+
+### 3. 🧠 Sınıflandırma Karar Geçiş Analizi (Hata Düzeltme Yönleri)
+Eski Savaş BERT ile Yeni BERTurk arasındaki **82 farklı kararın** detaylı dökümü:
+
+1. **Savaş BERT'in `Negatif` Dediklerinden Dönenler:**
+   * **25 Tweet ➔ `Nötr` Yapıldı:** Savaş BERT'in "enflasyon", "zorunlu", "darp" gibi kelimeleri görünce sığ bir panikle negatif etiketlediği resmi, hukuki ve duygusuz haber metinleri yeni modelimizce objektif haber diline uygun olarak nötrlendi.
+   * **7 Tweet ➔ `Pozitif` Yapıldı:** *"Metro istiyoruz"* gibi yapıcı temenni/istekler ve taziye/dua içeren ifadeler doğru sınıfa taşındı.
+2. **Savaş BERT'in `Nötr` Dediklerinden Dönenler:**
+   * **9 Tweet ➔ `Negatif` Yapıldı:** Eski modelin algılayamadığı, sitem barındıran trafik ve yaşam kalitesi şikayetleri yeni modelce anında yakalandı.
+   * **14 Tweet ➔ `Pozitif` Yapıldı:** Eski modelin kararsız kalıp nötre çektiği açık memnuniyet ifadeleri pozitife taşındı.
+3. **Savaş BERT'in `Pozitif` Dediklerinden Dönenler:**
+   * **9 Tweet ➔ `Negatif` Yapıldı:** Kelime avcılığına takılarak pozitif sanılan sitemkar ve ironik/sarkastik şikayetler negatif olarak düzeltildi.
+   * **18 Tweet ➔ `Nötr` Yapıldı:** *"Otel açıldı"*, *"uçuşlar başladı"* gibi kuru turizm ve sektörel haberler nötrlendi.
+
+---
+
+### 🔍 Canlı Karşılaştırmalı Örnekler
+
+İki modelin gerçek metinler üzerindeki performansı ve yeni modelin sarkazm/ironi anlama yeteneği:
+
+| Örnek Metin | ❌ Eski Savaş BERT Tahmini | ✅ Yeni BERTurk Tahmini | Fark / Analiz |
+| :--- | :---: | :---: | :--- |
+| *"İstanbul trafiği artık dayanılmaz bir hal aldı, yollarda çürüdük resmen! #trafik #istanbul"* | `POZİTİF` (Güven: `0.53`) | `NEGATİF` (Güven: **`0.9996`**) | Ham model kelimeleri ayırt edemezken, yeni modelimiz **%99.96** güvenle negatif sınıfı yakalamıştır. |
+| *"Mazota yine zam gelmiş, şahlanıyoruz maşallah uçuyoruz ülkece :)"* | `POZİTİF` (Güven: `0.52`) | `NEGATİF` (Güven: **`0.9997`**) | Yeni modelimiz "şahlanıyoruz", "uçuyoruz" ifadelerinin ardındaki **derin ironiyi (sarkasım) ve sitemi** mükemmel çözerek negatif etiketlemiştir. |
+| *"İstanbul Büyükşehir Belediyesi toplu taşıma sefer saatlerinde güncelleme yaptı."* | `POZİTİF` (Güven: `0.45`) | `NÖTR` (Güven: **`0.9999`**) | Duygu içermeyen salt bilgilendirici resmi duyuruyu modelimiz neredeyse **%100** güvenle nötr sınıfa yerleştirmiştir. |
+| *"Sonunda aradığımız gibi bir daire bulduk İstanbul'da, her şey çok güzel gidiyor 😊"* | `POZİTİF` (Güven: `0.49`) | `POZİTİF` (Güven: **`0.9998`**) | Pozitif memnuniyeti yüksek güvenle doğru şekilde etiketlemiştir. |
+| *"İstanbul Deft. 13.10.2025 t. 1305618 s. özelge... mezkur Kanun hükümleri çerçevesinde enflasyon düzeltmesi yapılması zorunlu olup..."* | `NEGATİF` (Güven: `0.92`) | `NÖTR` (Güven: **`0.9984`**) | Savaş BERT "enflasyon" ve "zorunlu" kelimelerini görünce panikle negatif etiketlemiş, yeni model ise yasal bildirim olduğunu anlayarak nötrlemiştir. |
+| *"Sayın İstanbul Büyükşehir Belediyesi, BEYLİKDÜZÜ’NE METRO İSTİYORUZ..."* | `NEGATİF` (Güven: `0.94`) | `POZİTİF` (Güven: **`0.9729`**) | Eski model talep/istek içeren cümleyi şikayet sanıp negatif derken, yeni modelimiz geleceğe yönelik yapıcı istekleri pozitif algılamıştır. |
+
+---
+
 ## ✨ Öne Çıkan Özellikler (Özet)
 
 *   **Çift-Katmanlı NLP Filtresi:** Metin temizliği, argo/küfür filtrelemesi ve büyük harf normalizasyonu.
