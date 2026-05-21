@@ -55,8 +55,8 @@ Aşağıdaki grafikler iki modelin tahmin dağılımlarını ve sınıflandırma
 
 | Modeller Arası Duygu Dağılım Grafiği | Sınıflandırma Karar Geçiş Matrisi (Heatmap) |
 | :---: | :---: |
- (<img width="2970" height="1772" alt="savas_vs_berturk_distribution" src="https://github.com/user-attachments/assets/da581627-21fd-48d7-a09a-2fbdf69625ae" />
- (<img width="2106" height="1775" alt="savas_vs_berturk_transitions" src="https://github.com/user-attachments/assets/10b45657-f734-4c0d-a4c7-3d432542a462" />
+| <img src="https://github.com/user-attachments/assets/da581627-21fd-48d7-a09a-2fbdf69625ae" alt="savas_vs_berturk_distribution" width="100%" /> | <img src="https://github.com/user-attachments/assets/10b45657-f734-4c0d-a4c7-3d432542a462" alt="savas_vs_berturk_transitions" width="100%" /> |
+
 
 
 ---
