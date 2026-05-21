@@ -56,29 +56,37 @@
         const qPct = Math.min(100, Math.round((qLen / 512) * 100));
         let displayCat = cat.replace('_', ' ').toUpperCase();
         
-        let catHtml = `<div style="margin-bottom: 20px; width: 100%;">`;
+        let catHtml = `<div class="keyword-cat-wrap">`;
         
         catHtml += `
-        <div style="margin-bottom: 10px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <h4 style="color: var(--accent); font-size: 13px; letter-spacing: 0.5px; margin: 0;">🏷️ ${displayCat}</h4>
-                <span style="color: ${limitColor}; font-size: 11px; font-family: 'JetBrains Mono', monospace;">${qLen}/512${limitWarning}</span>
+        <div class="keyword-cat-header-wrap">
+            <div class="keyword-cat-title-row">
+                <h4 class="keyword-cat-title">🏷️ ${displayCat}</h4>
+                <span class="keyword-cat-length" style="color: ${limitColor};">${qLen}/512${limitWarning}</span>
             </div>
-            <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden;">
-                <div style="height: 100%; width: ${qPct}%; background: ${barColor}; transition: width 0.5s ease;"></div>
+            <div class="keyword-progress-bar">
+                <div class="keyword-progress-fill" style="width: ${qPct}%; background: ${barColor};"></div>
             </div>
         </div>`;
         
-        catHtml += `<div class="tag-container" style="margin-bottom: 0;">`;
+        catHtml += `<div class="tag-container">`;
         catHtml += kws.map(k => `
           <div class="tag">
             ${k.word}
-            <button onclick="deleteKeyword(${k.id})">×</button>
+            <button class="btn-delete-kw" data-id="${k.id}">×</button>
           </div>
         `).join('');
         catHtml += `</div></div>`;
         list.innerHTML += catHtml;
       }
+      
+      // Bind keyword deletion dynamically (Kural 3)
+      list.querySelectorAll('.btn-delete-kw').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-id');
+          deleteKeyword(id);
+        });
+      });
 
       // Benzersiz kategorileri bulup datalist'e ekle
       const uniqueCats = Object.keys(categories);
@@ -216,4 +224,34 @@
   }
 
   // Sayfa yüklendiğinde çalıştır
-  loadData();
+  document.addEventListener('DOMContentLoaded', () => {
+    loadData();
+    
+    // Bind admin controls dynamically (Kural 3)
+    const fetchBtn = document.getElementById('fetchBtn');
+    if (fetchBtn) {
+      fetchBtn.addEventListener('click', showFetchModal);
+    }
+    
+    const btnAddKw = document.getElementById('btnAddKw');
+    if (btnAddKw) {
+      btnAddKw.addEventListener('click', addKeyword);
+    }
+    
+    const btnCancelFetch = document.getElementById('btnCancelFetch');
+    if (btnCancelFetch) {
+      btnCancelFetch.addEventListener('click', cancelFetch);
+    }
+    
+    const btnExecuteFetch = document.getElementById('btnExecuteFetch');
+    if (btnExecuteFetch) {
+      btnExecuteFetch.addEventListener('click', executeFetch);
+    }
+    
+    const btnErrorClose = document.getElementById('btnErrorClose');
+    if (btnErrorClose) {
+      btnErrorClose.addEventListener('click', () => {
+        document.getElementById('errorModal').style.display = 'none';
+      });
+    }
+  });

@@ -972,3 +972,246 @@
   @media (max-width: 768px) {
     .admin-page .grid { grid-template-columns: 1fr; }
   }
+
+
+/* Custom refactored classes to eliminate inline styles (Kural 3) */
+.btn-excel-export {
+  padding: 8px 16px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 8px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+.btn-excel-export:hover {
+  border-color: var(--positive);
+}
+
+.btn-admin-panel {
+  padding: 8px 16px;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 8px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+.btn-admin-panel:hover {
+  border-color: var(--accent);
+}
+
+.header-actions {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  gap: 12px;
+}
+
+/* Set relative positioning for header in index */
+.header {
+  position: relative;
+}
+
+/* Icons background */
+.chart-card h3 .icon {
+  background: var(--accent-glow);
+}
+
+#aiInsightsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.loading-text {
+  font-size: 12px;
+  color: var(--text-dim);
+  text-align: center;
+  padding-top: 30px;
+}
+
+.tweet-loading-indicator {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.trend-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--card-border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.feed-filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.filter-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.filter-title.align-right {
+  text-align: right;
+}
+
+#sentimentTabs {
+  margin-bottom: 0;
+}
+
+.tweet-irony {
+  color: #6366f1;
+}
+
+/* Admin specific clean CSS */
+.quota-card {
+  margin-bottom: 24px;
+}
+
+.progress-helper {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 8px;
+}
+
+.card-desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-col {
+  flex: 1;
+}
+
+.form-label {
+  font-size: 13px;
+  color: var(--text-dim);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  background: var(--bg);
+  color: white;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.keyword-helper {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+}
+
+.divider {
+  border-top: 1px solid var(--card-border);
+  margin: 20px 0;
+}
+
+.form-title {
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+/* Modals modifiers */
+.modal-content.success {
+  border-color: var(--positive);
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
+}
+.modal-content.success .countdown-circle {
+  border-color: var(--positive);
+  color: var(--positive);
+  background: rgba(16, 185, 129, 0.1);
+}
+.modal-content.success .modal-title {
+  color: var(--positive);
+}
+.modal-content.success .loader {
+  display: block;
+  border-color: rgba(16, 185, 129, 0.2);
+  border-top-color: var(--positive);
+  margin-top: 20px;
+}
+
+.modal-content.error {
+  border-color: var(--negative);
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.2);
+}
+.modal-content.error .countdown-circle {
+  border-color: var(--negative);
+  color: var(--negative);
+  background: rgba(239, 68, 68, 0.1);
+}
+.modal-content.error .modal-title {
+  color: var(--negative);
+}
+.modal-content.error .btn-cancel {
+  width: 100%;
+  border-color: var(--negative);
+  color: var(--negative);
+}
+
+/* Keyword progress/cat list classes */
+.keyword-cat-wrap {
+  margin-bottom: 20px;
+  width: 100%;
+}
+.keyword-cat-header-wrap {
+  margin-bottom: 10px;
+}
+.keyword-cat-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.keyword-cat-title {
+  color: var(--accent);
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+.keyword-cat-length {
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.keyword-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.keyword-progress-fill {
+  height: 100%;
+  transition: width 0.5s ease;
+}
+

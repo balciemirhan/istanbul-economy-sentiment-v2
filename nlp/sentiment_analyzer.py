@@ -8,6 +8,12 @@ from config import SENTIMENT_MODEL
 logger = logging.getLogger(__name__)
 
 class SentimentAnalyzer:
+    PURE_NEGATIVE_KEYWORDS = [
+        "protesto", "eylem", "yürüyoruz", "yoksulluk", "açlık", "geçinemiyoruz", "pahalılık", "istifa", 
+        "isyan", "arızası", "rötar", "kaza yaptı", "kilitlendi", "çilesi", "pahalı", "belanızı", "belası", 
+        "iş değil", "yerlerde", "rezalet", "soygun", "hırsızlık", "çıldırdım", "çıldırırsın"
+    ]
+
     def __init__(self):
         logger.info(f"Model yükleniyor: {SENTIMENT_MODEL} (Bu işlem ilk seferde vakit alabilir)...")
         try:
@@ -68,16 +74,11 @@ class SentimentAnalyzer:
         final_sentiment = flip_sentiment(base_sentiment) if is_ironic else base_sentiment
         
         # 5. Kural Tabanlı Duygu Ezmesi (Override)
-        pure_negative_keywords = [
-            "protesto", "eylem", "yürüyoruz", "yoksulluk", "açlık", "geçinemiyoruz", "pahalılık", "istifa", 
-            "isyan", "arızası", "rötar", "kaza yaptı", "kilitlendi", "çilesi", "pahalı", "belanızı", "belası", 
-            "iş değil", "yerlerde", "rezalet", "soygun", "hırsızlık", "çıldırdım", "çıldırırsın"
-        ]
         raw_lower = raw_text.lower()
         
         if final_sentiment in ["pozitif", "notr"]:
             # Eğer saf isyan/arıza kelimelerinden biri geçiyorsa direkt negatif yap
-            if any(kw in raw_lower for kw in pure_negative_keywords):
+            if any(kw in raw_lower for kw in self.PURE_NEGATIVE_KEYWORDS):
                 final_sentiment = "negatif"
                 
             # İSTANBUL TRAFİK OVERRIDE (Özel Kural)

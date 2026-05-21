@@ -32,3 +32,12 @@ class Keyword(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     word = Column(String, unique=True, nullable=False)
     category = Column(String, nullable=False, default='genel') # ekonomi, ulasim, turizm vb.
+
+class FetchJob(Base):
+    __tablename__ = 'fetch_jobs'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    is_running = Column(Boolean, default=False)
+    message = Column(String, default='Bekleniyor...')
+    logs = Column(String, default='')  # Logs joined by \n
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow)

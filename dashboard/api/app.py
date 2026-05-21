@@ -10,13 +10,13 @@ import io
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from database.db_manager import (
-    SessionLocal, Tweet, Keyword,
-    get_dashboard_stats, get_weekly_trend, get_active_keywords,
-    add_keyword, delete_keyword, init_db, export_all_tweets_to_excel
+    Keyword, get_dashboard_stats, get_weekly_trend, get_active_keywords,
+    add_keyword, delete_keyword, init_db, export_all_tweets_to_excel,
+    get_paginated_tweets, get_tweets_by_filter,
+    get_fetch_job_status, start_fetch_job, update_fetch_job_status
 )
 from nlp.insights_manager import generate_ai_insights
 from api.tweet_fetcher import LocalUsageMonitor, config
-from sqlalchemy import or_
 from main import run_pipeline
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
@@ -30,64 +30,44 @@ def add_header(response):
         response.headers['Expires'] = '0'
     return response
 
-FETCH_STATUS = {
-    "is_running": False,
-    "message": "Bekleniyor...",
-    "logs": []
-}
-
-def update_fetch_status(msg):
-    FETCH_STATUS["message"] = msg
-    FETCH_STATUS["logs"].append(msg)
-    if len(FETCH_STATUS["logs"]) > 10:
-        FETCH_STATUS["logs"].pop(0)
+@app.errorhandler(Exception)
+def handle_exception(e):
+    """Global error handler for both API and HTML routes (DRY compliance)."""
+    app.logger.exception(f"Beklenmeyen hata: {e}")
+    if request.path.startswith('/api/'):
+        return jsonify({"error": str(e)}), 500
+    else:
+        return f"Sistem hatası: {str(e)}", 500
 
 def background_fetch_task(max_tweets, days):
     try:
-        FETCH_STATUS["is_running"] = True
-        FETCH_STATUS["logs"] = []
-        update_fetch_status(f"Arka plan işlemi başlıyor ({max_tweets} hedef, {days} gün)...")
+        start_fetch_job()
+        update_fetch_job_status(f"Arka plan işlemi başlıyor ({max_tweets} hedef, {days} gün)...", is_running=True)
         
-        # main_path eklemesine gerek yok çünkü root'tan çalıştırılacak
-        
-        run_pipeline(max_tweets=max_tweets, days=days, status_callback=update_fetch_status)
-        update_fetch_status("İşlem başarıyla tamamlandı.")
+        run_pipeline(max_tweets=max_tweets, days=days, status_callback=lambda msg: update_fetch_job_status(msg, is_running=True))
+        update_fetch_job_status("İşlem başarıyla tamamlandı.", is_running=False)
     except Exception as e:
-        update_fetch_status(f"Hata oluştu: {str(e)}")
-    finally:
-        FETCH_STATUS["is_running"] = False
+        update_fetch_job_status(f"Hata oluştu: {str(e)}", is_running=False)
 
 @app.route('/')
 def index():
-    try:
-        return render_template('index.html')
-    except Exception as e:
-        return f"Dashboard HTML dosyası bulunamadı: {e}", 500
+    return render_template('index.html')
 
 @app.route('/admin')
 def admin():
-    try:
-        return render_template('admin.html')
-    except Exception as e:
-        return f"Admin HTML dosyası bulunamadı: {e}", 500
+    return render_template('admin.html')
 
 @app.route('/api/stats')
 def stats():
-    try:
-        stats_data = get_dashboard_stats()
-        return jsonify(stats_data)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    stats_data = get_dashboard_stats()
+    return jsonify(stats_data)
 
 @app.route('/api/weekly-trend')
 def weekly_trend():
-    try:
-        sentiment = request.args.get('sentiment', 'hepsi')
-        topic = request.args.get('topic', 'hepsi')
-        data = get_weekly_trend(sentiment=sentiment, topic=topic)
-        return jsonify(data)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    sentiment = request.args.get('sentiment', 'hepsi')
+    topic = request.args.get('topic', 'hepsi')
+    data = get_weekly_trend(sentiment=sentiment, topic=topic)
+    return jsonify(data)
 
 @app.route('/api/tweets')
 def tweets():
@@ -97,66 +77,22 @@ def tweets():
     topic = request.args.get('topic', 'hepsi')
     keyword = request.args.get('keyword', '')
 
-    db = SessionLocal()
-    try:
-        query = db.query(Tweet)
-        if sentiment != 'hepsi':
-            query = query.filter(Tweet.sentiment == sentiment)
-            
-        if topic != 'hepsi':
-            query = query.filter(Tweet.category == topic)
-            
-        if keyword:
-            query = query.filter(Tweet.text.ilike(f"%{keyword}%"))
-
-        total_count = query.count()
-        offset = (page - 1) * limit
-        
-        recent_tweets = query.order_by(Tweet.created_at.desc()).offset(offset).limit(limit).all()
-        
-        tweets_list = []
-        for t in recent_tweets:
-            tweets_list.append({
-                "id": t.tweet_id,
-                "text": t.text,
-                "user": f"@{t.author_username}",
-                "date": t.created_at.strftime("%d %b"),
-                "sentiment": t.sentiment,
-                "score": t.score,
-                "is_ironic": t.is_ironic
-            })
-            
-        has_more = (offset + limit) < total_count
-        
-        return jsonify({
-            "tweets": tweets_list,
-            "has_more": has_more
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    finally:
-        db.close()
-
+    data = get_paginated_tweets(
+        page=page,
+        limit=limit,
+        sentiment=sentiment,
+        topic=topic,
+        keyword=keyword
+    )
+    return jsonify(data)
 
 @app.route('/api/ai-insights')
 def ai_insights():
     sentiment = request.args.get('sentiment', 'hepsi')
     topic = request.args.get('topic', 'hepsi')
     
-    db = SessionLocal()
-    try:
-        query = db.query(Tweet)
-        if sentiment != 'hepsi':
-            query = query.filter(Tweet.sentiment == sentiment)
-        if topic != 'hepsi':
-            query = query.filter(Tweet.category == topic)
-            
-        tweets = query.all()
-        return jsonify(generate_ai_insights(tweets))
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    finally:
-        db.close()
+    tweets_data = get_tweets_by_filter(sentiment=sentiment, topic=topic)
+    return jsonify(generate_ai_insights(tweets_data))
 
 # --- ADMIN ENDPOINTS ---
 
@@ -196,7 +132,8 @@ def get_usage():
 
 @app.route('/api/fetch-data', methods=['POST'])
 def fetch_data():
-    if FETCH_STATUS["is_running"]:
+    status = get_fetch_job_status()
+    if status["is_running"]:
         return jsonify({"error": "İşlem zaten devam ediyor"}), 400
         
     data = request.json or {}
@@ -214,24 +151,21 @@ def fetch_data():
 
 @app.route('/api/fetch-status', methods=['GET'])
 def fetch_status():
-    return jsonify(FETCH_STATUS)
+    return jsonify(get_fetch_job_status())
 
 @app.route('/api/export', methods=['GET'])
 def export_excel():
-    try:
-        output = io.BytesIO()
-        if not export_all_tweets_to_excel(output):
-            return "Excel oluşturulacak veri bulunamadı veya hata oluştu.", 404
-            
-        output.seek(0)
-        return send_file(
-            output,
-            as_attachment=True,
-            download_name="istanbul_ekonomi_tum_veriler.xlsx",
-            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
-    except Exception as e:
-        return f"Excel oluşturulurken hata: {e}", 500
+    output = io.BytesIO()
+    if not export_all_tweets_to_excel(output):
+        return "Excel oluşturulacak veri bulunamadı veya hata oluştu.", 404
+        
+    output.seek(0)
+    return send_file(
+        output,
+        as_attachment=True,
+        download_name="istanbul_ekonomi_tum_veriler.xlsx",
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
 
 if __name__ == '__main__':
     # Flask sunucusu başlatılmadan önce veritabanı tablolarını (Keyword vs.) kontrol et ve eksikse yarat

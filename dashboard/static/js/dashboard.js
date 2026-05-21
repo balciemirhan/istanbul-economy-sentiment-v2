@@ -29,7 +29,7 @@ async function loadMoreTweets() {
     list.innerHTML = '';
   }
   
-  const loadingHtml = `<div id="loadingIndicator" style="text-align:center; padding: 20px; color: var(--text-dim); font-size: 14px;">Yükleniyor...</div>`;
+  const loadingHtml = `<div id="loadingIndicator" class="tweet-loading-indicator">Yükleniyor...</div>`;
   list.insertAdjacentHTML('beforeend', loadingHtml);
 
   try {
@@ -50,7 +50,7 @@ async function loadMoreTweets() {
             <span>${t.user}</span>
             <span>${t.date}</span>
             <span class="tweet-score ${t.sentiment}">${t.sentiment.toUpperCase()} · ${t.score}</span>
-            ${t.is_ironic ? '<span style="color:#6366f1;">🤖 İroni Tespit Edildi</span>' : ''}
+            ${t.is_ironic ? '<span class="tweet-irony">🤖 İroni Tespit Edildi</span>' : ''}
           </div>
         </div>
       </div>
@@ -331,9 +331,11 @@ function updateLineChart(weeks) {
   });
 }
 
-function setSentimentFilter(filter) {
+function setSentimentFilter(filter, element) {
   document.querySelectorAll('#sentimentTabs .feed-tab').forEach(t => t.classList.remove('active'));
-  event.target.classList.add('active');
+  if (element) {
+    element.classList.add('active');
+  }
   currentSentiment = filter;
   resetAndLoadTweets();
 }
@@ -344,7 +346,8 @@ function openTopicModal() {
 
 function closeTopicModal(event) {
   if (event && event.target !== document.getElementById('topicModal')) return;
-  document.getElementById('topicModal').classList.remove('active');
+  const modal = document.getElementById('topicModal');
+  if (modal) modal.classList.remove('active');
 }
 
 function setTopicFilter(filter, displayName, icon) {
@@ -378,7 +381,7 @@ function resetAndLoadTweets() {
 async function loadAIInsights() {
   try {
     const list = document.getElementById('aiInsightsList');
-    list.innerHTML = '<div style="font-size: 12px; color: var(--text-dim); text-align: center; padding-top: 30px;">İçgörüler hesaplanıyor...</div>';
+    list.innerHTML = '<div class="loading-text">İçgörüler hesaplanıyor...</div>';
     
     const res = await fetch(`/api/ai-insights?sentiment=${currentSentiment}&topic=${currentTopic}`);
     const insights = await res.json();
@@ -407,7 +410,7 @@ async function loadTopics() {
     
     const container = document.getElementById('topicGrid');
     let html = `
-      <div class="topic-card active" data-cat="hepsi" onclick="setTopicFilter('hepsi', 'Tüm Konular', '🌍')">
+      <div class="topic-card active" data-cat="hepsi">
         <div class="topic-icon">🌍</div>
         <div class="topic-name">Tüm Konular</div>
       </div>
@@ -425,7 +428,7 @@ async function loadTopics() {
       const displayCat = cat.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
       const icon = icons[cat] || '🏷️';
       html += `
-        <div class="topic-card" data-cat="${cat}" onclick="setTopicFilter('${cat}', '${displayCat}', '${icon}')">
+        <div class="topic-card" data-cat="${cat}">
           <div class="topic-icon">${icon}</div>
           <div class="topic-name">${displayCat}</div>
         </div>
@@ -433,6 +436,16 @@ async function loadTopics() {
     });
     
     container.innerHTML = html;
+
+    // Bind topic card clicks dynamically (Kural 3)
+    container.querySelectorAll('.topic-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const cat = card.getAttribute('data-cat');
+        const name = card.querySelector('.topic-name').innerText;
+        const icon = card.querySelector('.topic-icon').innerText;
+        setTopicFilter(cat, name, icon);
+      });
+    });
   } catch(e) { console.error(e); }
 }
 
@@ -469,4 +482,53 @@ document.addEventListener('DOMContentLoaded', () => {
   listContainer.appendChild(triggerDiv);
   
   observer.observe(triggerDiv);
+
+  // Dynamic event listener bindings for dashboard controls (Kural 3)
+  
+  // Trend view buttons
+  document.querySelectorAll('.trend-view-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const view = e.currentTarget.getAttribute('data-view');
+      setTrendView(view);
+    });
+  });
+  
+  // Sentiment filter tabs
+  document.querySelectorAll('#sentimentTabs .feed-tab').forEach(tab => {
+    tab.addEventListener('click', (e) => {
+      const filter = e.currentTarget.getAttribute('data-sentiment');
+      setSentimentFilter(filter, e.currentTarget);
+    });
+  });
+  
+  // Topic filter open button
+  const topicFilterBtn = document.getElementById('topicFilterBtn');
+  if (topicFilterBtn) {
+    topicFilterBtn.addEventListener('click', openTopicModal);
+  }
+  
+  // Scroll to Top button click
+  const scrollToTopBtn = document.getElementById('scrollToTop');
+  if (scrollToTopBtn) {
+    scrollToTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+  
+  // Topic modal close buttons
+  const topicModal = document.getElementById('topicModal');
+  if (topicModal) {
+    topicModal.addEventListener('click', (e) => {
+      if (e.target === topicModal) {
+        closeTopicModal();
+      }
+    });
+    
+    const topicModalClose = topicModal.querySelector('.topic-modal-close');
+    if (topicModalClose) {
+      topicModalClose.addEventListener('click', () => {
+        closeTopicModal();
+      });
+    }
+  }
 });
