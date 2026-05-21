@@ -1,3 +1,4 @@
+import argparse
 import logging
 import os
 import sys
@@ -144,8 +145,43 @@ def run_pipeline(max_tweets=100, days=7, status_callback=None):
     return {"success": True, "saved": saved_count, "filtered": filtered_count, "message": final_msg}
 
 def main():
-    # Terminalden manuel çalıştırmak için
-    run_pipeline(max_tweets=0) # Şu an için kapalı, test amaçlı 0
+    """
+    Terminalden manuel çalıştırma için komut satırı argümanlarını (argparse) yönetir.
+    
+    Kullanım Senaryoları (Terminal Örnekleri):
+    -------------------------------------------
+    1. Güvenli/Kontrol Modu (Hiç veri çekmeden sadece DB/Yedekleme test eder):
+       python main.py
+       (max_tweets varsayılan olarak 0'dır, kota harcamaz)
+       
+    2. Manuel Veri Çekme ve Test (Örn: 50 tweet, 3 günlük arama):
+       python main.py --tweets 50 --days 3
+       
+    3. Yardım Menüsünü Görüntüleme:
+       python main.py --help
+    """
+    parser = argparse.ArgumentParser(
+        description="İstanbul Ekonomi Twitter Duygu Analizi Boru Hattı CLI",
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    
+    parser.add_argument(
+        "--tweets", 
+        type=int, 
+        default=0, 
+        help="Çekilecek maksimum tweet sayısı (0 = veri çekimi kapalı, varsayılan: 0)"
+    )
+    parser.add_argument(
+        "--days", 
+        type=int, 
+        default=7, 
+        help="Geriye dönük kaç günlük veri taranacağı (varsayılan: 7)"
+    )
+    
+    args = parser.parse_args()
+    
+    # Boru hattını kullanıcı parametreleriyle başlat
+    run_pipeline(max_tweets=args.tweets, days=args.days)
 
 if __name__ == "__main__":
     main()
