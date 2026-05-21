@@ -53,10 +53,9 @@ Filtrelerden başarıyla geçmiş 260 adet gerçek/temiz tweetlik test seti üze
 
 Aşağıdaki grafikler iki modelin tahmin dağılımlarını ve sınıflandırma kararlarının geçiş matrisini (hangi duygunun nereye kaydığını) görselleştirmektedir:
 
-<p align="center">
-  <img src="reports/savas_vs_berturk_distribution.png" width="48%" alt="Modeller Arası Duygu Dağılım Grafiği" />
-  <img src="reports/savas_vs_berturk_transitions.png" width="48%" alt="Sınıflandırma Karar Geçiş Matrisi (Heatmap)" />
-</p>
+| Modeller Arası Duygu Dağılım Grafiği | Sınıflandırma Karar Geçiş Matrisi (Heatmap) |
+| :---: | :---: |
+| ![Modeller Arası Duygu Dağılım Grafiği](reports/savas_vs_berturk_distribution.png) | ![Sınıflandırma Karar Geçiş Matrisi (Heatmap)](reports/savas_vs_berturk_transitions.png) |
 
 ---
 
