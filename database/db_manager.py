@@ -111,6 +111,7 @@ def get_dashboard_stats():
         positive = db.query(Tweet).filter(Tweet.sentiment == 'pozitif').count()
         negative = db.query(Tweet).filter(Tweet.sentiment == 'negatif').count()
         neutral = db.query(Tweet).filter(Tweet.sentiment == 'notr').count()
+        ironic = db.query(Tweet).filter(Tweet.is_ironic == True).count()
         
         avg_score = db.query(func.avg(Tweet.score)).scalar() or 0.0
         
@@ -119,7 +120,8 @@ def get_dashboard_stats():
             "positive": {"count": positive, "percentage": round((positive/total)*100, 1) if total > 0 else 0},
             "negative": {"count": negative, "percentage": round((negative/total)*100, 1) if total > 0 else 0},
             "neutral": {"count": neutral, "percentage": round((neutral/total)*100, 1) if total > 0 else 0},
-            "avg_score": round(avg_score, 2)
+            "avg_score": round(avg_score, 2),
+            "ironic": {"count": ironic, "percentage": round((ironic/total)*100, 1) if total > 0 else 0}
         }
 
 
@@ -410,5 +412,41 @@ def update_fetch_job_status(msg, is_running=True):
         
         job.logs = '\n'.join(logs_list)
         db.commit()
+
+
+def get_category_sentiment_stats():
+    """Kategorilere göre duygu dağılımı sayılarını çeker."""
+    with get_db() as db:
+        try:
+            # Query format: category, sentiment, count
+            results = db.query(
+                Tweet.category,
+                Tweet.sentiment,
+                func.count(Tweet.tweet_id)
+            ).group_by(Tweet.category, Tweet.sentiment).all()
+            
+            # Organize into a dict: {category: {pozitif: X, negatif: Y, notr: Z}}
+            stats = {}
+            for row in results:
+                category = row[0]
+                sentiment = row[1]
+                count = row[2]
+                if not category:
+                    category = "genel"
+                if category not in stats:
+                    stats[category] = {"pozitif": 0, "negatif": 0, "notr": 0}
+                if sentiment in stats[category]:
+                    stats[category][sentiment] = count
+            
+            # Fill default categories if missing
+            default_cats = ["makro_ekonomi", "ulasim_lojistik", "gayrimenkul_insaat", "ticaret_perakende", "genel"]
+            for cat in default_cats:
+                if cat not in stats:
+                    stats[cat] = {"pozitif": 0, "negatif": 0, "notr": 0}
+                    
+            return stats
+        except Exception as e:
+            logger.error(f"Kategori duygu istatistikleri çekilirken hata: {e}")
+            return {}
 
 

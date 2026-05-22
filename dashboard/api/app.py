@@ -13,7 +13,8 @@ from database.db_manager import (
     Keyword, get_dashboard_stats, get_weekly_trend, get_active_keywords,
     add_keyword, delete_keyword, init_db, export_all_tweets_to_excel,
     get_paginated_tweets, get_tweets_by_filter,
-    get_fetch_job_status, start_fetch_job, update_fetch_job_status
+    get_fetch_job_status, start_fetch_job, update_fetch_job_status,
+    get_category_sentiment_stats
 )
 from nlp.insights_manager import generate_ai_insights
 from api.tweet_fetcher import LocalUsageMonitor, config
@@ -65,6 +66,11 @@ def copilot_page():
 def stats():
     stats_data = get_dashboard_stats()
     return jsonify(stats_data)
+
+@app.route('/api/category-sentiment')
+def category_sentiment():
+    data = get_category_sentiment_stats()
+    return jsonify(data)
 
 @app.route('/api/weekly-trend')
 def weekly_trend():

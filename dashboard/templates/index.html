@@ -68,6 +68,11 @@
       <div class="value" id="stat-neutral">-</div>
       <div class="sub" id="sub-neutral">-% oran</div>
     </div>
+    <div class="stat-card ironic">
+      <div class="label">İroni Oranı</div>
+      <div class="value" id="stat-ironic">-</div>
+      <div class="sub" id="sub-ironic">-% oran</div>
+    </div>
   </div>
 
   <!-- Charts Grid (Pie + AI Insights + Line) -->
@@ -110,6 +115,14 @@
         <span>28 günlük toplam: <strong id="trendPeriodTotal">0</strong> tweet</span>
         <span id="trendMomentumText">—</span>
       </div>
+    </div>
+  </div>
+
+  <!-- Kategori Bazlı Duygu Dağılımı -->
+  <div class="chart-card category-sentiment-card" style="margin-bottom: 24px;">
+    <h3><span class="icon">🏷️</span> Kategori Bazlı Duygu Dağılımı</h3>
+    <div style="height: 280px; position: relative;">
+      <canvas id="categorySentimentChart"></canvas>
     </div>
   </div>
 

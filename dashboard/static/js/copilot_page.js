@@ -370,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
       aiMsgDiv.appendChild(bubbleDiv);
 
       // 4. Grafik (Chart.js) Desteği
-      if (data.chart_data) {
+      if (data.chart_data && Object.keys(data.chart_data).length > 0) {
         const canvasId = `copilot-chart-${Date.now()}`;
         const chartContainer = document.createElement('div');
         chartContainer.className = 'copilot-embedded-chart';

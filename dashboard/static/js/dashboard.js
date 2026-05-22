@@ -77,6 +77,11 @@ function updateDashboard(stats) {
   document.getElementById('stat-neutral').innerText = stats.neutral.count;
   document.getElementById('sub-neutral').innerText = `%${stats.neutral.percentage} oran`;
   
+  if (document.getElementById('stat-ironic')) {
+    document.getElementById('stat-ironic').innerText = `%${stats.ironic ? stats.ironic.percentage : 0}`;
+    document.getElementById('sub-ironic').innerText = `${stats.ironic ? stats.ironic.count : 0} tweet`;
+  }
+  
   // Ortalama Güven Skorunu Güncelle
   if(document.getElementById('stat-confidence')) {
       document.getElementById('stat-confidence').innerText = `Ort. ${stats.avg_score}`;
@@ -449,6 +454,99 @@ async function loadTopics() {
   } catch(e) { console.error(e); }
 }
 
+let categoryChartInstance = null;
+
+async function loadCategorySentiment() {
+  const canvas = document.getElementById('categorySentimentChart');
+  if (!canvas) return;
+  
+  try {
+    const res = await fetch('/api/category-sentiment');
+    const data = await res.json();
+    
+    // Map category names to user-friendly titles
+    const categoryLabels = {
+      'makro_ekonomi': 'Makro Ekonomi',
+      'ulasim_lojistik': 'Ulaşım & Lojistik',
+      'gayrimenkul_insaat': 'Gayrimenkul & İnşaat',
+      'ticaret_perakende': 'Ticaret & Perakende',
+      'genel': 'Genel'
+    };
+    
+    const categories = Object.keys(data);
+    const labels = categories.map(cat => categoryLabels[cat] || cat);
+    
+    const positiveData = categories.map(cat => data[cat].pozitif || 0);
+    const neutralData = categories.map(cat => data[cat].notr || 0);
+    const negativeData = categories.map(cat => data[cat].negatif || 0);
+    
+    const ctx = canvas.getContext('2d');
+    if (categoryChartInstance) categoryChartInstance.destroy();
+    
+    categoryChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Pozitif',
+            data: positiveData,
+            backgroundColor: '#10b981',
+            borderWidth: 0,
+            borderRadius: 6
+          },
+          {
+            label: 'Nötr',
+            data: neutralData,
+            backgroundColor: '#f59e0b',
+            borderWidth: 0,
+            borderRadius: 6
+          },
+          {
+            label: 'Negatif',
+            data: negativeData,
+            backgroundColor: '#ef4444',
+            borderWidth: 0,
+            borderRadius: 6
+          }
+        ]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            stacked: true,
+            grid: { color: 'rgba(255, 255, 255, 0.04)' },
+            ticks: { color: '#64748b', font: { family: 'Outfit', size: 11 } }
+          },
+          y: {
+            stacked: true,
+            grid: { display: false },
+            ticks: { color: '#e2e8f0', font: { family: 'Outfit', size: 12, weight: '500' } }
+          }
+        },
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { color: '#94a3b8', font: { family: 'Outfit', size: 12 }, padding: 15 }
+          },
+          tooltip: {
+            backgroundColor: '#1e293b',
+            titleColor: '#e2e8f0',
+            bodyColor: '#94a3b8',
+            borderColor: '#334155',
+            borderWidth: 1
+          }
+        }
+      }
+    });
+  } catch (err) {
+    console.error("Kategori sentiment grafiği yüklenirken hata:", err);
+  }
+}
+
 // Scroll to Top Listener
 window.addEventListener('scroll', () => {
   const btn = document.getElementById('scrollToTop');
@@ -473,6 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadTopics();
   loadAIInsights();
   loadWeeklyTrend();
+  loadCategorySentiment();
   
   // Gözlemci için sayfa sonuna gizli div ekle
   const listContainer = document.querySelector('.feed-section');
