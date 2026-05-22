@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/SQLite-Database-blue?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite">
 </p>
 
- Bu proje; İstanbul'un ekonomik nabzını X (Twitter) üzerinden tutan, halkın ulaşım, perakende, gayrimenkul ve makroekonomi konularındaki duygu durumunu analiz eden tam otomatik bir NLP boru hattıdır (Pipeline). Özel olarak 5.000 adet tweet ile eğitilmiş **(Fine-Tuned) 128k BERTurk** yapay zeka modelini merkezine alır ve sonuçları dinamik bir web arayüzünde (Dashboard) sunar. Ayrıca, yöneticiler ve veri analistleri için doğal dilde veritabanı sorguları (Text-to-SQL), dinamik grafik sentezleme ve sesli yanıt yetenekleri barındıran bağımsız **[İstanbul Co-Pilot Java Backend](https://github.com/emirhanbalci/istanbul-copilot-java)** servisiyle tam entegre çalışacak şekilde tasarlanmıştır.
+ Bu proje; İstanbul'un ekonomik nabzını X (Twitter) üzerinden tutan, halkın ulaşım, perakende, gayrimenkul ve makroekonomi konularındaki duygu durumunu analiz eden tam otomatik bir NLP boru hattıdır (Pipeline). Özel olarak 5.000 adet tweet ile eğitilmiş **(Fine-Tuned) 128k BERTurk** yapay zeka modelini merkezine alır ve sonuçları dinamik bir web arayüzünde (Dashboard) sunar. Ayrıca, yöneticiler ve veri analistleri için doğal dilde veritabanı sorguları (Text-to-SQL), dinamik grafik sentezleme ve sesli yanıt yetenekleri barındıran bağımsız **[İstanbul Co-Pilot Java Backend](https://github.com/balciemirhan/istanbul-copilot-java)** servisiyle tam entegre çalışacak şekilde tasarlanmıştır.
 
 ---
 
@@ -21,7 +21,7 @@ Bu proje, daha önceki **[balciemirhan/istanbul-economy-sentiment](https://githu
 
 > [!IMPORTANT]
 > **🤖 Yeni Entegrasyon - İstanbul Co-Pilot AI Karar Destek Ajanı:**
-> Bu güncelleme ile birlikte sisteme yöneticiler ve veri analistleri için geliştirilmiş kurumsal düzeyde bir yapay zeka asistanı eklenmiştir! **[istanbul-copilot-java](https://github.com/emirhanbalci/istanbul-copilot-java)** deposunda yer alan bu bağımsız Java backend servisi, doğal dil ile veritabanı sorgulama (Text-to-SQL), sesli yanıt ve dinamik grafik sentezleme özelliklerini sunmaktadır.
+> Bu güncelleme ile birlikte sisteme yöneticiler ve veri analistleri için geliştirilmiş kurumsal düzeyde bir yapay zeka asistanı eklenmiştir! **[istanbul-copilot-java](https://github.com/balciemirhan/istanbul-copilot-java)** deposunda yer alan bu bağımsız Java backend servisi, doğal dil ile veritabanı sorgulama (Text-to-SQL), sesli yanıt ve dinamik grafik sentezleme özelliklerini sunmaktadır.
 
 ---
 
@@ -31,18 +31,12 @@ Aşağıda projenin ana ekranlarından alınan görüntüler yer almaktadır:
 
 <div align="center">
 
-| 📊 Ana Dashboard Paneli | 🤖 Co-Pilot AI Arayüzü | 📈 Sentiment Analiz Grafikleri |
+| 📊 Ana Dashboard Paneli | 📈 Sentiment Analiz Grafikleri | 🔍 Dinamik Filtreleme Alanı |
 | :---: | :---: | :---: |
-| <img width="1899" height="902" alt="sayfa1" src="https://github.com/user-attachments/assets/56bb075e-007d-4771-8635-288bba56ba4f" />
- alt="Ana Dashboard Paneli" width="100%" /> | <img width="1897" height="903" alt="sayfa2" src="https://github.com/user-attachments/assets/a8b16cd1-7552-40c4-8d62-28c3a6e027df" />
- alt="Co-Pilot AI Arayüzü" width="100%" /> |  <img width="1914" height="909" alt="sayfa3" src="https://github.com/user-attachments/assets/008fcf63-86e5-40cf-a44c-cae8e125cb26" />
- alt="Sentiment Analiz Grafikleri" width="100%" /> |
-| *Canlı duygu dağılımı, kategori grafikleri ve özet metrikler* | *Doğal dil sorgu arayüzü, sesli asistan ve grafik sentezi* | *Model performans metrikleri ve karşılaştırmalı analizler* |
+| <img src="https://github.com/user-attachments/assets/56bb075e-007d-4771-8635-288bba56ba4f" alt="Ana Dashboard Paneli" width="100%" /> | <img src="https://github.com/user-attachments/assets/a8b16cd1-7552-40c4-8d62-28c3a6e027df" alt="Sentiment Analiz Grafikleri" width="100%" /> | <img src="https://github.com/user-attachments/assets/008fcf63-86e5-40cf-a44c-cae8e125cb26" alt="Dinamik Filtreleme Alanı" width="100%" /> |
+| *Canlı duygu dağılımı, kategori grafikleri ve özet metrikler* | *Model performans metrikleri ve karşılaştırmalı analizler* | *Kategori, tarih ve duygu bazlı dinamik filtreleme arayüzü* |
 
 </div>
-
-> [!NOTE]
-> Ekran görüntülerini eklemek için `SCREENSHOT_1_URL_BURAYA`, `SCREENSHOT_2_URL_BURAYA` ve `SCREENSHOT_3_URL_BURAYA` yer tutucularını kendi görüntü URL'lerinizle değiştirin. GitHub'a görüntü yüklemek için repo **Issues** sekmesini veya Releases/Assets bölümünü kullanabilirsiniz.
 
 ---
 
@@ -130,7 +124,7 @@ Eski Savaş BERT ile Yeni BERTurk arasındaki **82 farklı kararın** detaylı d
 
 Bu sistem, yöneticiler ve veri analistleri için karar alma süreçlerini en üst düzeye çıkarmak amacıyla gelişmiş bir **Yapay Zeka Karar Destek Ajanı** ile entegre edilmiştir. 
 
-AI asistan backend servisi **[emirhanbalci/istanbul-copilot-java](https://github.com/emirhanbalci/istanbul-copilot-java)** deposunda yer alır ve şu yetenekleri sunar:
+AI asistan backend servisi **[balciemirhan/istanbul-copilot-java](https://github.com/balciemirhan/istanbul-copilot-java)** deposunda yer alır ve şu yetenekleri sunar:
 * **Doğal Dil Veritabanı Sorguları (Text-to-SQL):** SQL bilmenize gerek kalmadan, Türkçe sorularınızla veritabanını sorgular ve anında doğru yanıtları döndürür (örn. *"Ulaşım kategorisinde en yüksek etkileşim alan ilk 3 negatif tweet hangisidir?"*).
 * **Dinamik Grafik Sentezi:** Verileri görselleştirmek üzere otomatik olarak **Chart.js** uyumlu veri yapıları üretir ve sohbet ekranında anında interaktif grafikler çizer.
 * **Sesli Yanıt ve Asistan Entegrasyonu:** Karar destek paneli içerisinden asistanla sesli konuşabilir, [Spacebar] ile bas-konuş özelliğini kullanabilirsiniz.
