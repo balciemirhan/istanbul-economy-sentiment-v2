@@ -101,6 +101,19 @@ Eski Savaş BERT ile Yeni BERTurk arasındaki **82 farklı kararın** detaylı d
 
 ---
 
+## 🤖 İstanbul Co-Pilot AI Karar Destek Entegrasyonu (Java Spring Boot + LangChain4j)
+
+Bu sistem, yöneticiler ve veri analistleri için karar alma süreçlerini en üst düzeye çıkarmak amacıyla gelişmiş bir **Yapay Zeka Karar Destek Ajanı** ile entegre edilmiştir. 
+
+AI asistan backend servisi **[emirhanbalci/istanbul-copilot-java](https://github.com/emirhanbalci/istanbul-copilot-java)** deposunda yer alır ve şu yetenekleri sunar:
+* **Doğal Dil Veritabanı Sorguları (Text-to-SQL):** SQL bilmenize gerek kalmadan, Türkçe sorularınızla veritabanını sorgular ve anında doğru yanıtları döndürür (örn. *"Ulaşım kategorisinde en yüksek etkileşim alan ilk 3 negatif tweet hangisidir?"*).
+* **Dinamik Grafik Sentezi:** Verileri görselleştirmek üzere otomatik olarak **Chart.js** uyumlu veri yapıları üretir ve sohbet ekranında anında interaktif grafikler çizer.
+* **Sesli Yanıt ve Asistan Entegrasyonu:** Karar destek paneli içerisinden asistanla sesli konuşabilir, [Spacebar] ile bas-konuş özelliğini kullanabilirsiniz.
+
+Tüm sistem, Python sentiment dashboard'u ve Java Co-Pilot backend servisi olarak Docker Compose yardımıyla orkestre edilmiş şekilde çalıştırılabilir.
+
+---
+
 ## 🛠️ Adım Adım Kurulum ve Çalıştırma Rehberi
 
 Bu bölüm, projeyi bilgisayarınızda sıfırdan kurup çalıştırmanız için gereken tüm adımları **en temel seviyeden** başlayarak anlatmaktadır.
