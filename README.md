@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/SQLite-Database-blue?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite">
 </p>
 
- Bu proje; İstanbul'un ekonomik nabzını X (Twitter) üzerinden tutan, halkın ulaşım, perakende, gayrimenkul ve makroekonomi konularındaki duygu durumunu analiz eden tam otomatik bir NLP boru hattıdır (Pipeline). Özel olarak 5.000 adet tweet ile eğitilmiş **(Fine-Tuned) 128k BERTurk** yapay zeka modelini merkezine alır ve sonuçları dinamik bir web arayüzünde (Dashboard) sunar.
+ Bu proje; İstanbul'un ekonomik nabzını X (Twitter) üzerinden tutan, halkın ulaşım, perakende, gayrimenkul ve makroekonomi konularındaki duygu durumunu analiz eden tam otomatik bir NLP boru hattıdır (Pipeline). Özel olarak 5.000 adet tweet ile eğitilmiş **(Fine-Tuned) 128k BERTurk** yapay zeka modelini merkezine alır ve sonuçları dinamik bir web arayüzünde (Dashboard) sunar. Ayrıca, yöneticiler ve veri analistleri için doğal dilde veritabanı sorguları (Text-to-SQL), dinamik grafik sentezleme ve sesli yanıt yetenekleri barındıran bağımsız **[İstanbul Co-Pilot Java Backend](https://github.com/emirhanbalci/istanbul-copilot-java)** servisiyle tam entegre çalışacak şekilde tasarlanmıştır.
 
 ---
 
@@ -18,6 +18,10 @@ Bu proje, daha önceki **[balciemirhan/istanbul-economy-sentiment](https://githu
 
 *   **Eski Sürüm (v1):** Genel amaçlı hazır **Savaş BERT** (`savasy/bert-base-turkish-sentiment-cased`) modelini kullanmaktaydı ve doğruluk oranı daha kısıtlıydı.
 *   **Bu Sürüm (v2 - Yeni):** Savaş BERT modelini tamamen devre dışı bırakarak; bu projenin özel 5.000+ satırlık tweet veri setiyle bizzat ince ayar (Fine-Tuning) yapılmış **128k BERTurk** modelini (`Emirhan41/bert-base-turkish-128k-istanbul-sentiment`) kullanmaktadır. Bu sayede yerel argo, ironi, sarkazm ve İstanbul ekonomi gündemine dair hassas anlamlandırma başarısı olağanüstü düzeye çıkarılmıştır!
+
+> [!IMPORTANT]
+> **🤖 Yeni Entegrasyon - İstanbul Co-Pilot AI Karar Destek Ajanı:**
+> Bu güncelleme ile birlikte sisteme yöneticiler ve veri analistleri için geliştirilmiş kurumsal düzeyde bir yapay zeka asistanı eklenmiştir! **[istanbul-copilot-java](https://github.com/emirhanbalci/istanbul-copilot-java)** deposunda yer alan bu bağımsız Java backend servisi, doğal dil ile veritabanı sorgulama (Text-to-SQL), sesli yanıt ve dinamik grafik sentezleme özelliklerini sunmaktadır.
 
 ---
 
