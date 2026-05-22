@@ -31,10 +31,23 @@ Aşağıda projenin ana ekranlarından alınan görüntüler yer almaktadır:
 
 <div align="center">
 
-| 📊 Ana Dashboard Paneli | 📈 Sentiment Analiz Grafikleri | 🔍 Dinamik Filtreleme Alanı |
-| :---: | :---: | :---: |
-| <img src="https://github.com/user-attachments/assets/56bb075e-007d-4771-8635-288bba56ba4f" alt="Ana Dashboard Paneli" width="100%" /> | <img src="https://github.com/user-attachments/assets/a8b16cd1-7552-40c4-8d62-28c3a6e027df" alt="Sentiment Analiz Grafikleri" width="100%" /> | <img src="https://github.com/user-attachments/assets/008fcf63-86e5-40cf-a44c-cae8e125cb26" alt="Dinamik Filtreleme Alanı" width="100%" /> |
-| *Canlı duygu dağılımı, kategori grafikleri ve özet metrikler* | *Model performans metrikleri ve karşılaştırmalı analizler* | *Kategori, tarih ve duygu bazlı dinamik filtreleme arayüzü* |
+<table>
+  <tr>
+    <th align="center">📊 Ana Dashboard Paneli</th>
+    <th align="center">📈 Sentiment Analiz Grafikleri</th>
+    <th align="center">🔍 Dinamik Filtreleme Alanı</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="https://github.com/user-attachments/assets/56bb075e-007d-4771-8635-288bba56ba4f" alt="Ana Dashboard Paneli" width="460" /></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/a8b16cd1-7552-40c4-8d62-28c3a6e027df" alt="Sentiment Analiz Grafikleri" width="460" /></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/008fcf63-86e5-40cf-a44c-cae8e125cb26" alt="Dinamik Filtreleme Alanı" width="460" /></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Canlı duygu dağılımı, kategori grafikleri ve özet metrikler</em></td>
+    <td align="center"><em>Model performans metrikleri ve karşılaştırmalı analizler</em></td>
+    <td align="center"><em>Kategori, tarih ve duygu bazlı dinamik filtreleme arayüzü</em></td>
+  </tr>
+</table>
 
 </div>
 
