@@ -37,3 +37,10 @@ env/
 # Sistem Dosyaları
 .DS_Store
 Thumbs.db
+
+# Kişisel Çalışma Notları ve Kılavuzlar
+COPILOT_CALISTIRMA_KILAVUZU.md
+COPILOT_TEST_REHBERI.md
+MODEL_EGITIM_REHBERI.md
+PROJE_ANLAMA.md
+
