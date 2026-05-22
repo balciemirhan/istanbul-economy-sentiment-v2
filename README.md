@@ -33,7 +33,10 @@ Aşağıda projenin ana ekranlarından alınan görüntüler yer almaktadır:
 
 | 📊 Ana Dashboard Paneli | 🤖 Co-Pilot AI Arayüzü | 📈 Sentiment Analiz Grafikleri |
 | :---: | :---: | :---: |
-| <img src="SCREENSHOT_1_URL_BURAYA" alt="Ana Dashboard Paneli" width="100%" /> | <img src="SCREENSHOT_2_URL_BURAYA" alt="Co-Pilot AI Arayüzü" width="100%" /> | <img src="SCREENSHOT_3_URL_BURAYA" alt="Sentiment Analiz Grafikleri" width="100%" /> |
+| <img width="1899" height="902" alt="sayfa1" src="https://github.com/user-attachments/assets/56bb075e-007d-4771-8635-288bba56ba4f" />
+ alt="Ana Dashboard Paneli" width="100%" /> | <img width="1897" height="903" alt="sayfa2" src="https://github.com/user-attachments/assets/a8b16cd1-7552-40c4-8d62-28c3a6e027df" />
+ alt="Co-Pilot AI Arayüzü" width="100%" /> |  <img width="1914" height="909" alt="sayfa3" src="https://github.com/user-attachments/assets/008fcf63-86e5-40cf-a44c-cae8e125cb26" />
+ alt="Sentiment Analiz Grafikleri" width="100%" /> |
 | *Canlı duygu dağılımı, kategori grafikleri ve özet metrikler* | *Doğal dil sorgu arayüzü, sesli asistan ve grafik sentezi* | *Model performans metrikleri ve karşılaştırmalı analizler* |
 
 </div>
