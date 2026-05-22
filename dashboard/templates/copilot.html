@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>İstanbul Co-Pilot - AI Karar Destek Ajanı</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="copilot-page-body">
+
+<div class="copilot-page-container">
+  <!-- Sol Sidebar Panel (ChatGPT / Gemini stili) -->
+  <aside class="copilot-page-sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-orb"></div>
+      <div class="brand-title">İstanbul Co-Pilot</div>
+    </div>
+    
+    <div class="sidebar-menu">
+      <a href="/" class="sidebar-link">
+        <span class="icon">📊</span> Dashboard'a Dön
+      </a>
+      <a href="/admin" class="sidebar-link">
+        <span class="icon">⚙️</span> Yönetim Paneli
+      </a>
+      <button type="button" class="sidebar-link btn-clear-chat" id="btnClearChat">
+        <span class="icon">🧹</span> Sohbeti Temizle
+      </button>
+    </div>
+    
+    <div class="sidebar-info-card">
+      <div class="info-card-header">💡 Hızlı Bilgi</div>
+      <p>Bu asistan, sentiment analizi için <strong>BERT (Turkish fine-tuned)</strong> modelini kullanır ve veritabanınızdaki gerçek tweet verilerine doğrudan erişebilir.</p>
+      <div class="info-badge">Çevrimdışı / Canlı Veri</div>
+    </div>
+    
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar">Y</div>
+        <div class="user-name">Yönetici</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Sağ Ana Sohbet Alanı -->
+  <main class="copilot-page-main">
+    <!-- Sohbet Başlığı -->
+    <header class="copilot-page-header">
+      <div class="header-status-group">
+        <span class="status-dot pulsing"></span>
+        <div>
+          <h2>İstanbul Co-Pilot Asistanı</h2>
+          <p>Yapay Zeka Karar Destek Hizmeti</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <!-- Sesli Yanıt Toggle Butonu -->
+        <button type="button" class="copilot-header-action active" id="copilotSpeakerToggle" title="Sesli Yanıtı Kapat/Aç">
+          <svg class="speaker-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Mesajlaşma Gövdesi -->
+    <div class="copilot-page-chat-body" id="copilotChatBody">
+      <!-- Hoş Geldiniz Karşılama Ekranı -->
+      <div class="copilot-welcome-hub" id="copilotWelcomeMessage">
+        <div class="welcome-badge">🤖 YENİ NESİL ANALİZ PORTALI</div>
+        <h1>Ben İstanbul Co-Pilot</h1>
+        <p>Karar destek stratejileri oluşturabilir, veritabanı analizleri yapabilir ve canlı duygu anomalilerini inceleyebilirim. Hem yazarak hem de mikrofona konuşarak bana sorularınızı iletebilirsiniz.</p>
+        
+        <!-- Öneriler Grid -->
+        <div class="suggestions-hub-section">
+          <h3>🔍 Önerilen Başlangıç Sorguları</h3>
+          <div class="suggestions-hub-grid" id="copilotSuggestionsGrid">
+            <div class="suggestion-hub-cardloading">Veritabanı taranarak dinamik vakalar hazırlanıyor...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mesaj Konteyneri -->
+      <div class="copilot-page-messages-container" id="copilotMessagesContainer"></div>
+
+      <!-- Çok Aşamalı Holografik AI Yükleme Göstergesi -->
+      <div class="copilot-typing-indicator" id="copilotTypingIndicator" style="display: none;">
+        <div class="thinking-orb-container">
+          <div class="thinking-orb"></div>
+          <div class="thinking-orb-glow"></div>
+        </div>
+        <div class="thinking-label-container">
+          <span class="thinking-text" id="copilotThinkingText">Yapay Zeka düşünüyor...</span>
+          <span class="thinking-subtext" id="copilotThinkingSubtext">BERT modeli &amp; Veritabanı sorgulanıyor</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alt Komut ve Giriş Barı (ChatGPT / Gemini stili sabit alt bar) -->
+    <footer class="copilot-page-footer">
+      <!-- Kullanıcı Konuşurken Aktif Olan Neon Ses Dalgası Görselleştiricisi -->
+      <div class="user-soundwave-visualizer" id="userSoundwave">
+        <span class="soundwave-bar bar-1"></span>
+        <span class="soundwave-bar bar-2"></span>
+        <span class="soundwave-bar bar-3"></span>
+        <span class="soundwave-bar bar-4"></span>
+        <span class="soundwave-bar bar-5"></span>
+        <span class="soundwave-status-text">Sesiniz Dinleniyor...</span>
+      </div>
+
+      <div class="copilot-page-input-wrapper">
+        <textarea class="copilot-page-textarea" id="copilotTextarea" placeholder="Bir soru yazın veya [Space] tuşuna basılı tutarak konuşun..." rows="1"></textarea>
+        
+        <!-- Mikrofon Butonu (Speech-to-Text) -->
+        <button type="button" class="copilot-page-voice-btn" id="copilotVoiceBtn" title="Sesle Konuş (Hold Spacebar)">
+          <svg class="mic-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </button>
+
+        <!-- Gönder Butonu -->
+        <button type="button" class="copilot-page-send-btn" id="copilotSendBtn" title="Gönder">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="footer-hint">
+        <span>💡 <strong>Bas-Konuş:</strong> Herhangi bir yazı alanı dışındayken <strong>[Spacebar]</strong> tuşuna basılı tutarak konuşabilirsiniz.</span>
+      </div>
+    </footer>
+  </main>
+</div>
+
+<!-- JS Entegrasyonu -->
+<script src="{{ url_for('static', filename='js/copilot_page.js') }}"></script>
+</body>
+</html>

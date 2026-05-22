@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  java-copilot:
+    # GitHub kullanıcı adınıza göre otomatik eşleşir (.env içinde GITHUB_USERNAME tanımlayabilirsiniz, varsayılan: emirhanbalci)
+    image: ghcr.io/${GITHUB_USERNAME:-emirhanbalci}/istanbul-copilot-java:latest
+    container_name: istanbul-copilot-java-service
+    # =========================================================================
+    # GÜVENLİK AYARLARI (LOCAL vs CANLI/PRODUCTION MİMARİSİ)
+    # =========================================================================
+    # YEREL GELİŞTİRME (Flask yerelde, Java Docker'da ise):
+    # Java portunu (8080) yerel Flask'ın erişebilmesi için dışarıya açıyoruz.
+    ports:
+      - "8080:8080"
+      
+    # CANLI SUNUCU / PRODUCTION (Hem Flask hem Java Docker iç ağında ise):
+    # Portu tamamen dış dünyaya kapatmak ve güvenliği artırmak için:
+    # 1. Yukarıdaki 'ports' bloğunu kapatın (yorum satırı yapın).
+    # 2. Aşağıdaki 'expose' bloğunu açın.
+    # 3. Flask'ın ortam değişkenine JAVA_COPILOT_URL=http://java-copilot:8080 tanımını ekleyin.
+    # expose:
+    #   - "8080"
+    # =========================================================================
+    volumes:
+      # Proje kökündeki SQLite veritabanını konteyner içine bağla
+      - ./istanbul_ekonomi.db:/istanbul_ekonomi.db
+      - ./istanbul_ekonomi_demo.db:/istanbul_ekonomi_demo.db
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL}
+      - LLM_PROVIDER=${LLM_PROVIDER}
+      - LLM_MODEL_NAME=${LLM_MODEL_NAME}
+      - SPRING_DATASOURCE_URL=jdbc:sqlite:/istanbul_ekonomi.db
+    env_file:
+      - .env
+    restart: always

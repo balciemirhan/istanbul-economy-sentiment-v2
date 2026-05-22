@@ -57,6 +57,10 @@ def index():
 def admin():
     return render_template('admin.html')
 
+@app.route('/copilot')
+def copilot_page():
+    return render_template('copilot.html')
+
 @app.route('/api/stats')
 def stats():
     stats_data = get_dashboard_stats()
@@ -93,6 +97,51 @@ def ai_insights():
     
     tweets_data = get_tweets_by_filter(sentiment=sentiment, topic=topic)
     return jsonify(generate_ai_insights(tweets_data))
+
+@app.route('/api/copilot', methods=['POST'])
+def copilot_chat():
+    """AI Co-Pilot chat endpoint securely proxying to the Java Spring Boot service."""
+    import requests
+    data = request.json or {}
+    
+    # Canlı veya yerel Java Co-Pilot servis adresi (.env veya ortam değişkeninden alınır)
+    java_copilot_url = os.environ.get("JAVA_COPILOT_URL", "http://localhost:8080")
+    
+    try:
+        # Java Co-Pilot servisine güvenli proxy yap (tarayıcı doğrudan Java ile konuşmaz, port dışarıya kapatılır)
+        java_endpoint = f"{java_copilot_url.rstrip('/')}/api/copilot"
+        app.logger.info(f"Forwarding Co-Pilot chat request to Java service: {java_endpoint}")
+        
+        response = requests.post(
+            java_endpoint,
+            json=data,
+            headers={"Content-Type": "application/json"},
+            timeout=30
+        )
+        return jsonify(response.json()), response.status_code
+    except Exception as e:
+        app.logger.error(f"Java Co-Pilot servisine erişilemedi: {e}")
+        return jsonify({
+            "error": "Co-Pilot servisine şu anda erişilemiyor. Lütfen Java mikroservisinin ayakta olduğundan emin olun."
+        }), 503
+
+@app.route('/api/copilot/suggestions', methods=['GET'])
+def copilot_suggestions():
+    """AI Co-Pilot dynamic starting suggestions securely proxying to Java."""
+    import requests
+    java_copilot_url = os.environ.get("JAVA_COPILOT_URL", "http://localhost:8080")
+    
+    try:
+        java_endpoint = f"{java_copilot_url.rstrip('/')}/api/copilot/suggestions"
+        app.logger.info(f"Forwarding Co-Pilot suggestions request to Java service: {java_endpoint}")
+        
+        response = requests.get(java_endpoint, timeout=10)
+        return jsonify(response.json()), response.status_code
+    except Exception as e:
+        app.logger.error(f"Java Co-Pilot öneri servisine erişilemedi: {e}")
+        return jsonify({
+            "error": "Co-Pilot öneri servisine şu anda erişilemiyor. Lütfen Java mikroservisinin ayakta olduğundan emin olun."
+        }), 503
 
 # --- ADMIN ENDPOINTS ---
 
