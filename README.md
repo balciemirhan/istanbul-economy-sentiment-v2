@@ -25,6 +25,24 @@ Bu proje, daha önceki **[balciemirhan/istanbul-economy-sentiment](https://githu
 
 ---
 
+## 🖼️ Ekran Görüntüleri (Uygulama Önizleme)
+
+Aşağıda projenin ana ekranlarından alınan görüntüler yer almaktadır:
+
+<div align="center">
+
+| 📊 Ana Dashboard Paneli | 🤖 Co-Pilot AI Arayüzü | 📈 Sentiment Analiz Grafikleri |
+| :---: | :---: | :---: |
+| <img src="SCREENSHOT_1_URL_BURAYA" alt="Ana Dashboard Paneli" width="100%" /> | <img src="SCREENSHOT_2_URL_BURAYA" alt="Co-Pilot AI Arayüzü" width="100%" /> | <img src="SCREENSHOT_3_URL_BURAYA" alt="Sentiment Analiz Grafikleri" width="100%" /> |
+| *Canlı duygu dağılımı, kategori grafikleri ve özet metrikler* | *Doğal dil sorgu arayüzü, sesli asistan ve grafik sentezi* | *Model performans metrikleri ve karşılaştırmalı analizler* |
+
+</div>
+
+> [!NOTE]
+> Ekran görüntülerini eklemek için `SCREENSHOT_1_URL_BURAYA`, `SCREENSHOT_2_URL_BURAYA` ve `SCREENSHOT_3_URL_BURAYA` yer tutucularını kendi görüntü URL'lerinizle değiştirin. GitHub'a görüntü yüklemek için repo **Issues** sekmesini veya Releases/Assets bölümünü kullanabilirsiniz.
+
+---
+
 ## 📊 Model Karşılaştırma ve Performans Analizi (Savaş BERT vs. Yeni Fine-Tuned BERTurk)
 
 Projenin v2 aşamasında yapılan en büyük iyileştirme, duygu analizi motorunun tamamen yenilenmesidir. Eski genel amaçlı **Savaş BERT** (`savasy/bert-base-turkish-sentiment-cased`) modeli ile yeni, 5.017 adet özel tweet ile ince ayar (fine-tuning) yapılmış yerel **128k BERTurk** (`Emirhan41/bert-base-turkish-128k-istanbul-sentiment`) modelinin karşılaştırmalı performans ve doğruluk analizi aşağıda detaylandırılmıştır.
